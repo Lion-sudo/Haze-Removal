@@ -57,10 +57,10 @@ class DCPRemover(AbstractHazeRemover):
 
         # get the pixel with the max intensity (sum of RGB channels)
         # TODO: Check if average will work better on results
-        max_intensity_pixel = top_pixels[np.argmax(np.sum(top_pixels, axis=1))]
+        self._atmospheric_light = top_pixels[np.argmax(np.sum(top_pixels, axis=1))]
 
         if DEBUG_MODE:
-            print(max_intensity_pixel)
+            print(self._atmospheric_light)
             min_row, max_row = np.min(top_coords[0]), np.max(top_coords[0])
             min_col, max_col = np.min(top_coords[1]), np.max(top_coords[1])
             image_with_box = image.copy()
