@@ -7,6 +7,8 @@ from abstract_haze_remover import AbstractHazeRemover
 DEBUG_MODE = True  # Todo: Notice
 MIN_WINDOW_SIZE = 15
 TOP_PERCENT_FOR_ESTIMATION = 0.001
+ESTIMATING_TRANSMISSION_MAP = True
+OMEGA = 0.95
 
 class DCPRemover(AbstractHazeRemover):
     def __init__(self, image):
@@ -22,20 +24,35 @@ class DCPRemover(AbstractHazeRemover):
         self._soft_matt()
 
 
-    def _calculate_dark_channel(self, debug_mode=DEBUG_MODE):
-        # get the minimal intensity among the RGB channels
-        min_channel = np.min(self._image, axis=2)
+    def _calculate_dark_channel(self, estimating_transmission_map=False, debug_mode=DEBUG_MODE):
+        if not estimating_transmission_map:
+            # get the minimal intensity from the RGB channels to compute the dark channel
+            min_channel = np.min(self._image, axis=2)
+        else:
+            # get the minimal intensity from the RGB channels of the normalized image
+            # in order to compute the transmission map
+            normalized_image = self._image / self._atmospheric_light
+            min_channel = np.min(normalized_image, axis=2)
 
         # create a min kernel
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (MIN_WINDOW_SIZE, MIN_WINDOW_SIZE))
 
-        # apply the kernel and save the dark channel
-        self._dark_channel = cv2.erode(min_channel, kernel)
+        if not estimating_transmission_map:
+            # apply the kernel and save the dark channel
+            self._dark_channel = cv2.erode(min_channel, kernel)
+        else:
+            # apply the kernel and save the transmission map
+            self._transmission_map = 1 - OMEGA * (cv2.erode(min_channel, kernel))
 
         if DEBUG_MODE:
-            cv2.imshow("Dark Channel", self._dark_channel)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            if not estimating_transmission_map:
+                cv2.imshow("Dark Channel", self._dark_channel)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
+            else:
+                cv2.imshow("Transmission Map", self._transmission_map)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
 
 
     def _estimate_atmospheric_light(self):
@@ -70,7 +87,7 @@ class DCPRemover(AbstractHazeRemover):
             cv2.destroyAllWindows()
 
     def _estimate_transmission_map(self):
-        pass
+        self._calculate_dark_channel(ESTIMATING_TRANSMISSION_MAP)
 
     def _soft_matt(self):
         pass
