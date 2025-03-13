@@ -92,7 +92,7 @@ class DCPRemover(AbstractHazeRemover):
         self._calculate_dark_channel(ESTIMATING_TRANSMISSION_MAP)
 
 
-    def _soft_matt(self, lambda_=1e-4):
+    def _soft_matt(self):
         pass
 
 
