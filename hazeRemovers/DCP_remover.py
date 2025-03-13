@@ -5,10 +5,11 @@ from abstract_haze_remover import AbstractHazeRemover
 
 # Constants
 DEBUG_MODE = True  # Todo: Notice
-MIN_WINDOW_SIZE = 15
+DARK_CHANNEL_CALCULATION_WINDOW_SIZE = 15
 TOP_PERCENT_FOR_ESTIMATION = 0.001
 ESTIMATING_TRANSMISSION_MAP = True
 OMEGA = 0.95
+
 
 class DCPRemover(AbstractHazeRemover):
     def __init__(self, image):
@@ -23,8 +24,7 @@ class DCPRemover(AbstractHazeRemover):
         self._estimate_transmission_map()
         self._soft_matt()
 
-
-    def _calculate_dark_channel(self, estimating_transmission_map=False, debug_mode=DEBUG_MODE):
+    def _calculate_dark_channel(self, estimating_transmission_map=False):
         if not estimating_transmission_map:
             # get the minimal intensity from the RGB channels to compute the dark channel
             min_channel = np.min(self._image, axis=2)
@@ -35,7 +35,8 @@ class DCPRemover(AbstractHazeRemover):
             min_channel = np.min(normalized_image, axis=2)
 
         # create a min kernel
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (MIN_WINDOW_SIZE, MIN_WINDOW_SIZE))
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (DARK_CHANNEL_CALCULATION_WINDOW_SIZE,
+                                                            DARK_CHANNEL_CALCULATION_WINDOW_SIZE))
 
         if not estimating_transmission_map:
             # apply the kernel and save the dark channel
@@ -86,10 +87,12 @@ class DCPRemover(AbstractHazeRemover):
             cv2.waitKey(0)
             cv2.destroyAllWindows()
 
+
     def _estimate_transmission_map(self):
         self._calculate_dark_channel(ESTIMATING_TRANSMISSION_MAP)
 
-    def _soft_matt(self):
+
+    def _soft_matt(self, lambda_=1e-4):
         pass
 
 
