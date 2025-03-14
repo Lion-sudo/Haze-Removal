@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 from abstract_haze_remover import AbstractHazeRemover
 
+
 # Constants
-DEBUG_MODE = True
+DEBUG_MODE = False
 DARK_CHANNEL_CALCULATION_WINDOW_SIZE = 15
 TOP_PERCENT_FOR_ESTIMATION = 0.001
 OMEGA = 0.85  # got better results than 0.95
@@ -16,6 +17,9 @@ WEIGHTED_EPSILON = 0.001
 RECOVERY_EPSILON = 0.15
 SOBEL_WIN_SIZE = 3
 SIGMA_FOR_WEIGHTS = 0.1
+BFILTER_WIN_SIZE = 9
+BFILTER_SIGMA_COLOR = 75
+BFILTER_SIGMA_SPACE = 75
 
 
 class DCPRemover(AbstractHazeRemover):
@@ -139,7 +143,7 @@ class DCPRemover(AbstractHazeRemover):
         p = self._transmission_map
 
         # for better edge detection apply bilateral filter (less noise)
-        I_smooth = cv2.bilateralFilter(I, 9, 75, 75)
+        I_smooth = cv2.bilateralFilter(I, BFILTER_WIN_SIZE, BFILTER_SIGMA_COLOR, BFILTER_SIGMA_SPACE)
 
         # edge detection using gradient magnitude
         grad_x = cv2.Sobel(I_smooth, cv2.CV_32F, 1, 0, ksize=SOBEL_WIN_SIZE)
