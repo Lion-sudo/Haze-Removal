@@ -3,14 +3,17 @@ os.environ["OPENCV_LOG_LEVEL"]="SILENT"
 import cv2
 import removers_factory
 
+
 # Constants
 # String messages
 GREET_USER = "Hello! Welcome to the Haze Removal Program."
 WRONG_INPUT_PATH_EXCEPTION = "Error: Couldn't read the image. Please check the path and try again."
-EXIT_MSG = "Exiting the program... Goodbye!"
+EXIT_MSG = "\nExiting the program... Goodbye!"
 ASK_FOR_PATH = "Please provide the path to the image you'd like to use: \n"
-SUCCESS_MSG = "Haze-Free image saved successfully!"
-DESIRE_TO_CONTINUE = "\nWould you like to continue or exit?"
+SUCCESS_MSG = ("\n###################################\n"
+               "Haze-Free image saved successfully!\n"
+               "###################################\n")
+DESIRE_TO_CONTINUE = "Would you like to continue or exit?"
 CONTINUE_OPTIONS = ("1: Continue using the current image \n"
                     "2: Load a new image \n"
                     "3: Exit the program ")
@@ -37,7 +40,7 @@ def ask_if_should_continue():
     print(DESIRE_TO_CONTINUE)
     print(CONTINUE_OPTIONS)
     while True:
-        choice = input(ASK_FOR_PATH)
+        choice = input(ASK_CONTINUE_INPUT)
         match choice:
             case _ if choice == CONTINUE_CHOICE:
                 return DONT_LOAD_IMAGE, CONTINUE_WORK
