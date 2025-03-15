@@ -20,16 +20,21 @@ SIGMA_FOR_WEIGHTS = 0.1
 BFILTER_WIN_SIZE = 9
 BFILTER_SIGMA_COLOR = 75
 BFILTER_SIGMA_SPACE = 75
+GUIDED_METHOD_STR = "DCP_Guided_Method"
+WEIGHTED_METHOD_STR = "DCP_Weighted_Method"
 
 
 class DCPRemover(AbstractHazeRemover):
     def __init__(self, method):
-        # self._image = image.astype(np.float32) / 255.0  # normalize to [0, 1]
         self.__image = None
         self.__dark_channel = None
         self.__atmospheric_light = None
         self.__transmission_map = None
         self.__refinement_method = method
+
+
+    def get_method_name(self):
+        return WEIGHTED_METHOD_STR if self.__refinement_method else GUIDED_METHOD_STR
 
 
     def remove_haze(self, image):
