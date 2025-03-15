@@ -41,3 +41,6 @@ def create_haze_remover():
             case _ if choice == EXIT_CHOICE:
                 print(EXIT_MSG)
                 return None
+
+            case _:
+                print(INVALID_CHOICE)
