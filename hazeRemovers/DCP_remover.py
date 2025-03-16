@@ -125,7 +125,7 @@ class DCPRemover(AbstractHazeRemover):
     def __recover_haze_free_image(self):
         # make sure we keep a some of the haze in very dense haze areas
         self.__transmission_map = np.clip(self.__transmission_map, RECOVERY_EPSILON, 1.0)
-        self.__transmission_map = np.expand_dims(self.__transmission_map, axis=2)  # allow RGB channels multiplication
+        self.__transmission_map = np.expand_dims(self.__transmission_map, axis=2)  # allow RGB calculations
 
         # recover the haze using equation 22 from the paper
         haze_free_img = ((self.__image - self.__atmospheric_light) / self.__transmission_map) + self.__atmospheric_light
