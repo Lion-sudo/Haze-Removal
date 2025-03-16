@@ -21,14 +21,17 @@ WEIGHTED_GUIDED_FILTERING_METHOD = 1
 
 
 class CAPRemover(AbstractHazeRemover):
-    def __init__(self):
+    def __init__(self, method):
         self.__image = None
         self.__depth_map = None
         self.__atmospheric_light = None
         self.__transmission_map = None
+        self.__filter_method = method
 
 
     def get_method_name(self):
+        if self.__filter_method == WEIGHTED_GUIDED_FILTERING_METHOD:
+            return WEIGHTED_METHOD_NAME
         return GUIDED_METHOD_NAME
 
 
@@ -59,8 +62,11 @@ class CAPRemover(AbstractHazeRemover):
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (MIN_WINDOW_SIZE, MIN_WINDOW_SIZE))
         self.__depth_map = cv2.erode(self.__depth_map, kernel)
 
-        # refine the depth map using the guided filter
-        self.__depth_map = guided_filtering(self.__image, self.__depth_map)
+        # refine the depth map using weighted / regular guided filter
+        if self.__filter_method == WEIGHTED_GUIDED_FILTERING_METHOD:
+            self.__depth_map = weighted_guided_filtering(self.__image, self.__depth_map)
+        else:
+            self.__depth_map = guided_filtering(self.__image, self.__depth_map)
 
         if DEBUG_MODE:
             # normalize map for better visualization
