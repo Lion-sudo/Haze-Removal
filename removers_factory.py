@@ -1,4 +1,5 @@
 from hazeRemovers.DCP_remover import DCPRemover, GUIDED_FILTERING_METHOD, WEIGHTED_GUIDED_FILTERING_METHOD
+from hazeRemovers.CAP_remover import CAPRemover
 
 
 # Constants
@@ -36,7 +37,7 @@ def create_haze_remover():
                 return DCPRemover(WEIGHTED_GUIDED_FILTERING_METHOD)
 
             case _ if choice == CAP:
-                return None  # TODO: Implement CAP haze remover
+                return CAPRemover()
 
             case _ if choice == EXIT_CHOICE:
                 print(EXIT_MSG)
