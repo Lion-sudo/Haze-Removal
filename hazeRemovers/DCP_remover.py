@@ -8,7 +8,7 @@ from filters import guided_filtering, weighted_guided_filtering
 DEBUG_MODE = False
 DARK_CHANNEL_CALCULATION_WINDOW_SIZE = 15
 TOP_PERCENT_FOR_ESTIMATION = 0.001
-OMEGA = 0.85  # got better results than 0.95
+OMEGA = 0.85
 GUIDED_FILTERING_METHOD = 0
 WEIGHTED_GUIDED_FILTERING_METHOD = 1
 RECOVERY_EPSILON = 0.15
