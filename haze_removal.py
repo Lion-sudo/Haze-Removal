@@ -32,8 +32,8 @@ DONT_LOAD_IMAGE = False
 
 
 # Helper functions
-def get_output_name(input_id, method_name):
-    return f"image_{input_id}_haze_free_{method_name}.jpg"
+def get_output_name(input_name, method_name):
+    return f"{input_name}_haze_free_{method_name}.jpg"
 
 
 def ask_if_should_continue():
@@ -59,17 +59,18 @@ def ask_if_should_continue():
 def load_image():
     path = input(ASK_FOR_PATH)
     image = cv2.imread(path)
+    input_name = os.path.splitext(os.path.basename(path))[0]
     if image is None:
         raise Exception(WRONG_INPUT_PATH_EXCEPTION)
-    return image
+    return image, input_name
 
 
 # Main function
-def main(image, input_id):
+def main(image, input_name):
         remover = removers_factory.create_haze_remover()
         if not remover:
             return DONT_LOAD_IMAGE, FINISHED_WORK
-        cv2.imwrite(get_output_name(input_id, remover.get_method_name()), remover.remove_haze(image))
+        cv2.imwrite(get_output_name(input_name, remover.get_method_name()), remover.remove_haze(image))
         print(SUCCESS_MSG)
         return ask_if_should_continue()
 
@@ -78,11 +79,10 @@ if __name__ == "__main__":
     try:
         print(GREET_USER)
         should_load_image, is_finished = SHOULD_LOAD_IMAGE, CONTINUE_WORK
-        image, input_id = None, 0
+        image, input_name = None, None
         while not is_finished:
             if should_load_image:
-                image = load_image()
-                input_id += 1
-            should_load_image, is_finished = main(image, input_id)
+                image, input_name = load_image()
+            should_load_image, is_finished = main(image, input_name)
     except Exception as exception:
         print(exception)
