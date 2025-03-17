@@ -9,7 +9,7 @@ import removers_factory
 GREET_USER = "Hello! Welcome to the Haze Removal Program."
 WRONG_INPUT_PATH_EXCEPTION = "Error: Couldn't read the image. Please check the path and try again."
 EXIT_MSG = "\nExiting the program... Goodbye!"
-ASK_FOR_PATH = "Please provide the path to the image you'd like to use: \n"
+ASK_FOR_PATH = "Please provide the path to the image you would like to use: \n"
 SUCCESS_MSG = ("\n###################################\n"
                "Haze-Free image saved successfully!\n"
                "###################################\n")
