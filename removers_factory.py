@@ -3,6 +3,7 @@ from hazeRemovers.CAP_remover import CAPRemover
 
 
 # Constants
+# String messages
 INSTRUCTION = "\nChoose the haze removal method:"
 OPTIONS = ("1: Dark Channel Prior using Guided Filter "
            "\n2: Dark Channel Prior using Weighted Guided Filter "
@@ -12,7 +13,6 @@ OPTIONS = ("1: Dark Channel Prior using Guided Filter "
 ASK_INPUT = "Enter the number corresponding to your choice: "
 INVALID_CHOICE = "\nInvalid choice!"
 EXIT_MSG = "\nExiting the program... Goodbye!"
-
 
 # Codes
 DCP_GUIDED = "1"
