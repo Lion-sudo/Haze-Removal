@@ -5,7 +5,6 @@ from filters import guided_filtering, weighted_guided_filtering
 
 
 # Constants
-DEBUG_MODE = False
 DARK_CHANNEL_CALCULATION_WINDOW_SIZE = 15
 TOP_PERCENT_FOR_ESTIMATION = 0.001
 OMEGA = 0.85
@@ -63,16 +62,6 @@ class DCPRemover(AbstractHazeRemover):
             # apply the kernel and save the transmission map
             self.__transmission_map = 1 - OMEGA * (cv2.erode(min_channel, kernel))
 
-        if DEBUG_MODE:
-            if not estimating_transmission_map:
-                cv2.imshow("Dark Channel", self.__dark_channel)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
-            else:
-                cv2.imshow("Transmission Map", self.__transmission_map)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
-
 
     def __estimate_atmospheric_light(self):
         # flat the dark channel
@@ -94,17 +83,6 @@ class DCPRemover(AbstractHazeRemover):
         # use the average of top brightest pixels as the atmospheric light
         self.__atmospheric_light = np.mean(top_pixels, axis=0)
 
-        if DEBUG_MODE:
-            print("Atmospheric Light:", self.__atmospheric_light)
-            # Create a copy for visualization that's in 0-255 range
-            image_with_box = (self.__image * 255).astype(np.uint8)
-            min_row, max_row = np.min(top_coords[0]), np.max(top_coords[0])
-            min_col, max_col = np.min(top_coords[1]), np.max(top_coords[1])
-            cv2.rectangle(image_with_box, (min_col, min_row), (max_col, max_row), (0, 255, 0), 2)
-            cv2.imshow("Atmospheric Light Region", image_with_box)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
 
     def __estimate_transmission_map(self):
         self.__calculate_dark_channel(estimating_transmission_map=True)
@@ -115,11 +93,6 @@ class DCPRemover(AbstractHazeRemover):
             self.__transmission_map = guided_filtering(self.__image, self.__transmission_map)
         else:
             self.__transmission_map = weighted_guided_filtering(self.__image, self.__transmission_map)
-
-        if DEBUG_MODE:
-            cv2.imshow("Refined Transmission Map", self.__transmission_map)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
 
 
     def __recover_haze_free_image(self):
@@ -132,11 +105,4 @@ class DCPRemover(AbstractHazeRemover):
 
         # convert back to 0-255 and to uint8
         haze_free_img = np.clip(haze_free_img * 255, 0, 255).astype(np.uint8)
-
-        if DEBUG_MODE:
-            cv2.imshow("Haze-Free Image", haze_free_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
         return haze_free_img
-

@@ -5,7 +5,6 @@ from filters import guided_filtering, weighted_guided_filtering
 
 
 # Constants
-DEBUG_MODE = False
 MIN_TRANSMISSION = 0.1
 MAX_TRANSMISSION = 0.9
 GUIDED_METHOD_NAME = "CAP_Guided_Method"
@@ -67,13 +66,6 @@ class CAPRemover(AbstractHazeRemover):
         else:
             self.__depth_map = guided_filtering(self.__image, self.__depth_map)
 
-        if DEBUG_MODE:
-            # normalize map for better visualization
-            depth_normalized = cv2.normalize(self.__depth_map, None, 0, 1, cv2.NORM_MINMAX)
-            cv2.imshow("Depth Map", depth_normalized)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
 
     def __estimate_atmospheric_light(self):
         # set a threshold for depth
@@ -85,18 +77,10 @@ class CAPRemover(AbstractHazeRemover):
         # use the pixels where depth exceeds threshold
         self.__atmospheric_light = np.mean(self.__image[mask], axis=0)
 
-        if DEBUG_MODE:
-            print(self.__atmospheric_light)
-
 
     def __calculate_transmission_map(self):
         # calculate the transmission map using equation (2) in the paper
         self.__transmission_map = np.exp(-PAPER_BETA * self.__depth_map)
-
-        if DEBUG_MODE:
-            cv2.imshow("Transmission Map", self.__transmission_map)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
 
 
     def __recover_haze_free_image(self):
@@ -109,10 +93,4 @@ class CAPRemover(AbstractHazeRemover):
 
         # convert to [0-255] and uint8
         haze_free_img = np.clip(haze_free_img * 255, 0, 255).astype(np.uint8)
-
-        if DEBUG_MODE:
-            cv2.imshow("Haze-Free Image", haze_free_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
-
         return haze_free_img
