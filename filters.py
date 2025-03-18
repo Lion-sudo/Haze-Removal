@@ -3,7 +3,6 @@ import numpy as np
 
 
 # Constants
-DEBUG_MODE = False
 GUIDED_WINDOW_RADIUS = 40
 GUIDED_FILTER_EPSILON = 0.001
 WEIGHTED_EPSILON = 0.001
@@ -66,11 +65,6 @@ def weighted_guided_filtering(guidance_image, filter_input):
 
     # get weights based on gradient (lower weight near edges to preserve them)
     weights = np.exp(-(gradient_magnitude ** 2) / (2 * SIGMA_FOR_WEIGHTS ** 2))
-
-    if DEBUG_MODE:
-        cv2.imshow("Edge Weights", weights)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
 
     # weighted box filters
     N = cv2.boxFilter(np.ones_like(I), ddepth=-1, ksize=(WEIGHTED_R, WEIGHTED_R))
